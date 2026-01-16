@@ -3,18 +3,19 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import db, { initDB } from './database'
-import * as dotenv from 'dotenv'
 import Amadeus from 'amadeus'
+import * as dotenv from 'dotenv'
 
+// Load .env file for development
 dotenv.config()
 
-const clientId = (process.env.AMADEUS_CLIENT_ID || '').trim()
-const clientSecret = (process.env.AMADEUS_CLIENT_SECRET || '').trim()
+const clientId = process.env.MAIN_VITE_AMADEUS_CLIENT_ID || ''
+const clientSecret = process.env.MAIN_VITE_AMADEUS_CLIENT_SECRET || ''
 
 console.log('--- Environment Check ---')
-console.log('AMADEUS_CLIENT_ID length:', clientId.length)
-console.log('AMADEUS_CLIENT_SECRET length:', clientSecret.length)
-
+console.log('MAIN_VITE_AMADEUS_CLIENT_ID length:', (clientId || '').length)
+console.log('MAIN_VITE_AMADEUS_CLIENT_SECRET length:', (clientSecret || '').length)
+        
 let apiHealth = 'pending' // 'pending', 'ok', or specific error message
 let amadeus: any = null
 
@@ -43,7 +44,7 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
-    mainWindow.webContents.openDevTools()
+    if (is.dev) mainWindow.webContents.openDevTools()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
